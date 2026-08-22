@@ -1,3 +1,4 @@
+<!-- Panel del rol AGENTE: chat con clientes (tickets escalados por el chatbot), reservas, usuarios (clientes), pagos y viajes. -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -237,6 +238,10 @@
       </a>
 
       <div class="sidebar-section">Atención al cliente</div>
+      <a class="sidebar-link" data-key="chat" onclick="mostrarSeccion('chat')" tabindex="0" aria-label="Chat con clientes">
+        <i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Chat con clientes
+        <span class="badge-sidebar" id="badge-chat">–</span>
+      </a>
       <a class="sidebar-link" data-key="reservas" onclick="mostrarSeccion('reservas')" tabindex="0" aria-label="Gestión de reservas">
         <i class="bi bi-ticket-detailed-fill" aria-hidden="true"></i> Reservas
         <span class="badge-sidebar" id="badge-reservas">–</span>
@@ -305,21 +310,28 @@
           Resumen del día
         </h2>
         <div class="row g-3 mb-4">
-          <div class="col-6 col-lg-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card dorado" tabindex="0" role="button" onclick="mostrarSeccion('chat')">
+              <div class="stat-icon dorado"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i></div>
+              <div class="stat-numero" id="statChatsPendientes">0</div>
+              <div class="stat-label">Chats por atender</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
             <div class="stat-card azul" tabindex="0">
               <div class="stat-icon azul"><i class="bi bi-ticket-detailed-fill" aria-hidden="true"></i></div>
               <div class="stat-numero" id="statReservasHoy">0</div>
               <div class="stat-label">Reservas de hoy</div>
             </div>
           </div>
-          <div class="col-6 col-lg-4">
+          <div class="col-6 col-lg-3">
             <div class="stat-card verde" tabindex="0">
               <div class="stat-icon verde"><i class="bi bi-credit-card-fill" aria-hidden="true"></i></div>
               <div class="stat-numero" id="statPagosHoy">0</div>
               <div class="stat-label">Pagos procesados hoy</div>
             </div>
           </div>
-          <div class="col-6 col-lg-4">
+          <div class="col-6 col-lg-3">
             <div class="stat-card dorado" tabindex="0">
               <div class="stat-icon dorado"><i class="bi bi-airplane-fill" aria-hidden="true"></i></div>
               <div class="stat-numero" id="statViajesProgramados">0</div>
@@ -335,6 +347,56 @@
             y revisar horarios de viajes. La configuración estructural del sistema (rutas, vehículos, terminales, conductores y roles)
             solo la gestiona un administrador.
           </p>
+        </div>
+      </section>
+
+      <!-- ══ SECCIÓN: CHAT CON CLIENTES (tickets escalados por el bot) ══ -->
+      <section id="sec-chat" class="d-none" aria-label="Chat con clientes">
+        <h2 class="admin-section-titulo"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat con clientes</h2>
+        <div class="config-card">
+          <div class="aviso-lectura">
+            <i class="bi bi-info-circle" aria-hidden="true"></i>
+            Aquí llegan las conversaciones que el chatbot no pudo resolver solo, o en las que el cliente pidió hablar con un asesor.
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Filtro de tickets de chat">
+              <button type="button" class="btn btn-outline-secondary active" data-filtro-chat="PENDIENTES" onclick="cambiarFiltroChat('PENDIENTES', this)">Pendientes</button>
+              <button type="button" class="btn btn-outline-secondary" data-filtro-chat="TODAS" onclick="cambiarFiltroChat('TODAS', this)">Todas</button>
+            </div>
+            <button class="btn btn-outline-secondary btn-sm" onclick="cargarTicketsChat()"><i class="bi bi-arrow-clockwise me-1"></i>Actualizar</button>
+          </div>
+          <div class="row g-3">
+            <div class="col-lg-5">
+              <div class="admin-tabla" style="max-height:520px;overflow-y:auto">
+                <div id="listaTicketsChat">Cargando…</div>
+              </div>
+            </div>
+            <div class="col-lg-7">
+              <div id="conversacionChatVacia" class="config-card text-center text-muted py-5">
+                <i class="bi bi-chat-square-text d-block mb-2" style="font-size:2rem" aria-hidden="true"></i>
+                Selecciona una conversación de la lista para verla aquí.
+              </div>
+              <div id="conversacionChat" class="d-none">
+                <div class="config-card mb-2">
+                  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div>
+                      <div class="fw-bold" id="chatClienteNombre">—</div>
+                      <div class="text-muted small" id="chatClienteCorreo">—</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span id="chatEstadoBadge" class="estado-badge">—</span>
+                      <button class="btn btn-outline-danger btn-sm" id="btnCerrarTicket" onclick="cerrarTicketChat()"><i class="bi bi-check2-circle me-1"></i>Cerrar ticket</button>
+                    </div>
+                  </div>
+                </div>
+                <div id="chatMensajesAgente" class="chatbot-mensajes" style="height:320px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)"></div>
+                <form id="formRespuestaAgente" class="chatbot-form" style="border-top:none;border-radius:0 0 14px 14px;box-shadow:0 2px 10px rgba(0,0,0,.05)">
+                  <input type="text" id="inputRespuestaAgente" placeholder="Escribe tu respuesta..." autocomplete="off" aria-label="Escribe tu respuesta">
+                  <button type="submit" aria-label="Enviar respuesta"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -452,6 +514,158 @@
     } catch (e) {
       mostrarToastAdmin('No se pudo conectar a la API (puerto 8082). Verifica que el backend esté corriendo.', 'danger');
     }
+    cargarBadgeChat();
+  }
+
+  // ════════════════════════════════════════════════════════
+  // CHAT CON CLIENTES (tickets escalados por el chatbot)
+  // ════════════════════════════════════════════════════════
+  let filtroChatActual = 'PENDIENTES';
+  let ticketChatSeleccionado = null;
+  let totalMensajesTicketChat = 0;
+  let intervaloPollingChat = null;
+
+  async function cargarBadgeChat() {
+    try {
+      const pendientes = await fetch(`${API}/chatbot/consultas?estados=ESCALADA,EN_ATENCION`).then(r => r.json());
+      document.getElementById('badge-chat').textContent = pendientes.length;
+      animarContador('statChatsPendientes', pendientes.length);
+    } catch (e) { document.getElementById('badge-chat').textContent = '–'; }
+  }
+
+  function cambiarFiltroChat(filtro, btn) {
+    filtroChatActual = filtro;
+    document.querySelectorAll('[data-filtro-chat]').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    cargarTicketsChat();
+  }
+
+  async function cargarTicketsChat() {
+    const cont = document.getElementById('listaTicketsChat');
+    cont.innerHTML = 'Cargando…';
+    try {
+      const query = filtroChatActual === 'TODAS' ? 'estados=TODAS' : 'estados=ESCALADA,EN_ATENCION';
+      const tickets = await fetch(`${API}/chatbot/consultas?${query}`).then(r => r.json());
+      renderizarListaTicketsChat(tickets);
+      cargarBadgeChat();
+    } catch (e) {
+      cont.innerHTML = `<div class="text-center text-muted py-4">
+        <i class="bi bi-exclamation-triangle d-block mb-2" style="font-size:1.6rem"></i>
+        No se pudo conectar a la API.
+      </div>`;
+    }
+  }
+
+  const ESTADO_CHAT_LABEL = { ESCALADA:'Esperando asesor', EN_ATENCION:'En atención', CERRADA:'Cerrado', BOT:'Con el bot' };
+  const ESTADO_CHAT_CLASE = { ESCALADA:'eb-pendiente', EN_ATENCION:'eb-actualizado', CERRADA:'eb-completada', BOT:'eb-registrado' };
+
+  function renderizarListaTicketsChat(tickets) {
+    const cont = document.getElementById('listaTicketsChat');
+    if (!tickets.length) {
+      cont.innerHTML = `<div class="text-center text-muted py-4">
+        <i class="bi bi-inbox d-block mb-2" style="font-size:1.6rem"></i>No hay conversaciones para mostrar.
+      </div>`;
+      return;
+    }
+    cont.innerHTML = tickets.map(t => `
+      <button type="button" class="btn w-100 text-start border-0 border-bottom rounded-0 py-3 px-3 ${ticketChatSeleccionado === t.idConsulta ? 'bg-light' : ''}"
+        onclick="seleccionarTicketChat(${t.idConsulta})">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong class="small">${t.nombreContacto || 'Cliente sin nombre'}</strong>
+          <span class="estado-badge ${ESTADO_CHAT_CLASE[t.estado] || ''}" style="font-size:.68rem">${ESTADO_CHAT_LABEL[t.estado] || t.estado}</span>
+        </div>
+        <div class="text-muted small">${t.correoContacto || 'Sin correo registrado'}</div>
+        <div class="text-muted" style="font-size:.7rem">Ticket #${t.idConsulta} · ${t.agenteNombre ? 'Atendido por ' + t.agenteNombre : 'Sin asignar'}</div>
+      </button>
+    `).join('');
+  }
+
+  async function seleccionarTicketChat(id) {
+    ticketChatSeleccionado = id;
+    document.getElementById('conversacionChatVacia').classList.add('d-none');
+    document.getElementById('conversacionChat').classList.remove('d-none');
+    await cargarTicketsChat();
+    await cargarConversacionChat(id);
+    iniciarPollingConversacionChat();
+  }
+
+  async function cargarConversacionChat(id) {
+    try {
+      const datos = await fetch(`${API}/chatbot/consultas/${id}/mensajes`).then(r => r.json());
+      const tickets = await fetch(`${API}/chatbot/consultas?estados=TODAS`).then(r => r.json());
+      const ticket = tickets.find(t => t.idConsulta === id) || {};
+      document.getElementById('chatClienteNombre').textContent = ticket.nombreContacto || 'Cliente sin nombre';
+      document.getElementById('chatClienteCorreo').textContent = ticket.correoContacto || 'Sin correo registrado';
+      const badge = document.getElementById('chatEstadoBadge');
+      badge.textContent = ESTADO_CHAT_LABEL[datos.estado] || datos.estado;
+      badge.className = `estado-badge ${ESTADO_CHAT_CLASE[datos.estado] || ''}`;
+      document.getElementById('btnCerrarTicket').disabled = datos.estado === 'CERRADA';
+
+      const cont = document.getElementById('chatMensajesAgente');
+      cont.innerHTML = '';
+      datos.mensajes.forEach(m => {
+        const div = document.createElement('div');
+        const remitente = m.remitente.toLowerCase() === 'agente' ? 'cliente' : (m.remitente.toLowerCase() === 'cliente' ? 'bot' : m.remitente.toLowerCase());
+        // Nota: en la vista del agente se invierte visualmente el lado de las
+        // burbujas (las propias respuestas del agente quedan a la derecha).
+        const lado = m.remitente === 'AGENTE' ? 'cliente' : 'bot';
+        div.className = `chatbot-burbuja-msg ${lado}`;
+        const etiqueta = m.remitente === 'CLIENTE' ? 'Cliente' : (m.remitente === 'BOT' ? 'Asistente' : 'Tú');
+        div.innerHTML = `<span class="chatbot-remitente">${etiqueta}</span>${(m.contenido || '').replace(/</g,'&lt;')}`;
+        cont.appendChild(div);
+      });
+      cont.scrollTop = cont.scrollHeight;
+      totalMensajesTicketChat = datos.mensajes.length;
+    } catch (e) {
+      mostrarToastAdmin('No se pudo cargar la conversación.', 'danger');
+    }
+  }
+
+  function iniciarPollingConversacionChat() {
+    detenerPollingConversacionChat();
+    intervaloPollingChat = setInterval(async () => {
+      if (!ticketChatSeleccionado) return;
+      try {
+        const datos = await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/mensajes`).then(r => r.json());
+        if (datos.mensajes.length !== totalMensajesTicketChat) await cargarConversacionChat(ticketChatSeleccionado);
+      } catch (e) { /* se reintenta en el próximo ciclo */ }
+    }, 8000);
+  }
+
+  function detenerPollingConversacionChat() {
+    if (intervaloPollingChat) { clearInterval(intervaloPollingChat); intervaloPollingChat = null; }
+    ticketChatSeleccionado = null;
+  }
+
+  document.getElementById('formRespuestaAgente')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('inputRespuestaAgente');
+    const texto = input.value.trim();
+    if (!texto || !ticketChatSeleccionado) return;
+    input.value = '';
+    try {
+      await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/responder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto, agenteId: user ? user.id : null })
+      });
+      await cargarConversacionChat(ticketChatSeleccionado);
+    } catch (e) {
+      mostrarToastAdmin('No se pudo enviar la respuesta.', 'danger');
+    }
+  });
+
+  async function cerrarTicketChat() {
+    if (!ticketChatSeleccionado) return;
+    if (!confirm('¿Cerrar esta conversación? El cliente podrá escribir de nuevo si necesita algo más.')) return;
+    try {
+      await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/cerrar`, { method: 'POST' });
+      mostrarToastAdmin('Ticket cerrado', 'success');
+      await cargarConversacionChat(ticketChatSeleccionado);
+      await cargarTicketsChat();
+    } catch (e) {
+      mostrarToastAdmin('No se pudo cerrar el ticket.', 'danger');
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -460,8 +674,8 @@
   });
 
   // ── Navegación entre secciones ───────────
-  const secciones = ['dashboard','reservas','usuarios','pagos','viajes'];
-  const titulosSec = { dashboard:'Dashboard', reservas:'Reservas', usuarios:'Clientes', pagos:'Pagos', viajes:'Viajes' };
+  const secciones = ['dashboard','chat','reservas','usuarios','pagos','viajes'];
+  const titulosSec = { dashboard:'Dashboard', chat:'Chat con clientes', reservas:'Reservas', usuarios:'Clientes', pagos:'Pagos', viajes:'Viajes' };
   const entityKeys = ['reservas','usuarios','pagos','viajes'];
 
   function mostrarSeccion(nombre) {
@@ -483,6 +697,8 @@
 
     if (entityKeys.includes(nombre)) cargarEntidad(nombre);
     if (nombre === 'dashboard') cargarStatsDashboard();
+    if (nombre === 'chat') cargarTicketsChat();
+    else detenerPollingConversacionChat();
   }
 
   // ════════════════════════════════════════════════════════

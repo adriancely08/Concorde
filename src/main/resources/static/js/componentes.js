@@ -186,9 +186,21 @@ function inyectarFooter() {
   </footer>`;
 }
 
+// Inyecta el widget flotante de chat de atención al cliente (js/chatbot.js)
+// en toda página que cargue componentes.js, sin tener que agregar el
+// <script> manualmente en cada .html.
+function inyectarChatbot() {
+  if (document.getElementById('concorde-chatbot-script')) return;
+  const script = document.createElement('script');
+  script.id = 'concorde-chatbot-script';
+  script.src = 'js/chatbot.js';
+  document.body.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   inyectarNavbar();
   inyectarFooter();
+  inyectarChatbot();
   const pagina = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-link').forEach(link => {
     if (link.getAttribute('href') === pagina) {

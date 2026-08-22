@@ -1,3 +1,4 @@
+<!-- Página de atención al cliente: preguntas frecuentes y el botón que abre el widget del chatbot (ver js/chatbot.js). -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -37,7 +38,7 @@
             <div style="font-size:2.5rem;margin-bottom:1rem" aria-hidden="true">💬</div>
             <h2 class="h5 fw-bold texto-azul">Chat en vivo</h2>
             <p class="text-muted small mb-2">Disponible todos los días<br>24 horas</p>
-            <button type="button" onclick="UI.mostrarToast('Chat iniciado. Un agente te atenderá en breve.','success')" 
+            <button type="button" onclick="if (typeof ChatbotWidget !== 'undefined') { ChatbotWidget.toggle(); } else { UI.mostrarToast('El chat se está cargando, intenta de nuevo en un segundo.','info'); }"
               class="btn btn-concorde-primario btn-sm">Iniciar chat</button>
           </div>
         </div>
