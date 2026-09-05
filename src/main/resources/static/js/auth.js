@@ -51,6 +51,7 @@ const Auth = {
         ultimoAcceso: new Date().toLocaleString('es-CO')
       };
       sessionStorage.setItem('concorde_user', JSON.stringify(user));
+      if (datos.token) sessionStorage.setItem('concorde_token', datos.token);
       return user;
     } catch (e) {
       console.error('No se pudo conectar con la API de login:', e);
@@ -61,7 +62,13 @@ const Auth = {
   /** Cierra la sesión */
   logout() {
     sessionStorage.removeItem('concorde_user');
+    sessionStorage.removeItem('concorde_token');
     window.location.href = 'p03-login.html';
+  },
+
+  /** Token JWT de la sesión activa, o null si no hay */
+  getToken() {
+    return sessionStorage.getItem('concorde_token');
   },
 
   /** Retorna el usuario logueado o null */
@@ -94,3 +101,30 @@ const Auth = {
     }
   }
 };
+
+// ── Adjuntar el token JWT automáticamente ──────────────────────
+// Todo el proyecto ya usa fetch(...) directo contra la API en decenas
+// de archivos (main.js, componentes.js, admin-panel.html,
+// agente-panel.html, js/chatbot.js, etc). En vez de editar cada
+// llamada una por una para agregarle el header "Authorization", se
+// intercepta fetch aquí UNA sola vez: si la petición va dirigida a
+// esta API y hay una sesión activa, se le agrega el token solo. Así
+// ninguna otra pantalla necesitó cambiar su código para quedar
+// protegida por JWT.
+(function interceptarFetchConToken() {
+  const fetchOriginal = window.fetch.bind(window);
+  window.fetch = function (recurso, opciones) {
+    const url = typeof recurso === 'string' ? recurso : (recurso && recurso.url) || '';
+    const esApi = url.includes('/api/');
+    const esPublica = url.includes('/api/login') || url.includes('/api/registro');
+    const token = sessionStorage.getItem('concorde_token');
+
+    if (esApi && !esPublica && token) {
+      opciones = opciones || {};
+      const headers = new Headers(opciones.headers || {});
+      if (!headers.has('Authorization')) headers.set('Authorization', 'Bearer ' + token);
+      opciones = Object.assign({}, opciones, { headers });
+    }
+    return fetchOriginal(recurso, opciones);
+  };
+})();

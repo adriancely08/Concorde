@@ -2,6 +2,7 @@ package com.concorde.springboot.controlador;
 
 import com.concorde.springboot.modelo.Usuario;
 import com.concorde.springboot.repositorio.UsuarioRepository;
+import com.concorde.springboot.servicio.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,12 +11,23 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * CRUD de usuarios. A diferencia de los demás controladores CRUD, este
+ * nunca guarda una contraseña tal cual llega del formulario: antes de
+ * guardar (crear() y actualizar()) la hashea con PasswordUtil si todavía
+ * no está hasheada. Lo usan admin-panel.html y agente-panel.html para
+ * gestionar usuarios ya logueados como personal; el registro público de
+ * un cliente nuevo pasa por RegistroController, no por aquí.
+ */
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
 
     @Autowired
     private UsuarioRepository repository;
+
+    @Autowired
+    private PasswordUtil passwordUtil;
 
     @GetMapping
     public List<Usuario> listar() { return repository.findAll(); }
@@ -33,6 +45,10 @@ public class UsuarioController {
         if (u.getCreadoEn() == null) {
             u.setCreadoEn(LocalDateTime.now());
         }
+        // Nunca se guarda la contraseña tal cual llega del formulario.
+        if (u.getContrasenaHash() != null && !passwordUtil.esHashBcrypt(u.getContrasenaHash())) {
+            u.setContrasenaHash(passwordUtil.hash(u.getContrasenaHash()));
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(u));
     }
 
@@ -42,7 +58,16 @@ public class UsuarioController {
             e.setTelefono(datos.getTelefono());
             e.setNumeroDocumento(datos.getNumeroDocumento());
             e.setCorreoElectronico(datos.getCorreoElectronico());
-            e.setContrasenaHash(datos.getContrasenaHash());
+            // Si el formulario mandó una contraseña nueva (no vacía y que
+            // todavía no es un hash), se hashea antes de guardar. Si vino
+            // vacía o ya hasheada (el usuario no la tocó en el formulario),
+            // se conserva tal cual para no invalidar el hash existente.
+            String nuevaContrasena = datos.getContrasenaHash();
+            if (nuevaContrasena != null && !nuevaContrasena.isBlank()) {
+                e.setContrasenaHash(passwordUtil.esHashBcrypt(nuevaContrasena)
+                        ? nuevaContrasena
+                        : passwordUtil.hash(nuevaContrasena));
+            }
             e.setNombreCompleto(datos.getNombreCompleto());
             e.setRol(datos.getRol());
             // Si al actualizar no traía fecha, conserva la que ya tenía previamente

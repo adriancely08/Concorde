@@ -1,3 +1,4 @@
+<!-- Registro de una cuenta nueva de cliente. Llama a /api/registro (nunca a /api/usuarios), para que el rol siempre quede como CLIENTE. -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -147,18 +148,11 @@
     });
   </script>
   <script>
-    // Registro real contra la API (antes solo simulaba el envío y no
-    // creaba nada). Se resuelve el idRol de "CLIENTE" para asignarlo
-    // automáticamente, igual que hace el panel de Agente.
+    // Registro real contra la API. Se usa /api/registro (no /api/usuarios)
+    // a propósito: es un endpoint público que en el servidor SIEMPRE
+    // asigna el rol CLIENTE, sin importar qué mande el navegador -- así
+    // nadie puede auto-asignarse un rol distinto editando el payload.
     const API_REG = 'http://localhost:8082/api';
-    let rolClienteId = null;
-    (async function obtenerRolClienteId() {
-      try {
-        const roles = await fetch(`${API_REG}/roles`).then(r => r.json());
-        const cliente = roles.find(r => r.nombreRol === 'CLIENTE');
-        rolClienteId = cliente ? cliente.idRol : null;
-      } catch (e) { rolClienteId = null; }
-    })();
 
     async function enviarRegistro() {
       const form = document.getElementById('formRegistro');
@@ -184,8 +178,7 @@
         correoElectronico: document.getElementById('emailReg').value.trim(),
         telefono: document.getElementById('telefono').value.trim() || null,
         numeroDocumento: document.getElementById('numDoc').value.trim(),
-        contrasenaHash: passInput.value,
-        rol: rolClienteId ? { idRol: rolClienteId } : null
+        contrasena: passInput.value
       };
 
       const btn = form.querySelector('button[type="submit"]');
@@ -194,7 +187,7 @@
       btn.innerHTML = 'Creando cuenta…';
 
       try {
-        const res = await fetch(`${API_REG}/usuarios`, {
+        const res = await fetch(`${API_REG}/registro`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
         });
         if (!res.ok) {
