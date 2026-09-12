@@ -135,9 +135,87 @@ public class ReporteController {
             conteo.merge(etiqueta, 1L, Long::sum);
         }
 
-        return conteo.entrySet().stream()
+        List<Map<String, Object>> resultadoRutas = conteo.entrySet().stream()
                 .map(e -> Map.<String, Object>of("ruta", e.getKey(), "reservas", e.getValue()))
                 .sorted((a, b) -> Long.compare((long) b.get("reservas"), (long) a.get("reservas")))
                 .collect(Collectors.toList());
+        return resultadoRutas;
+    }
+
+    // ── 8. Reporte individual de un cliente ────────────────
+    // Reúne todo lo que le pertenece a un usuario puntual: sus datos,
+    // el historial completo de sus reservas (con la ruta y el pago de
+    // cada una) y un resumen (cuántas reservas tiene, cuántas están
+    // confirmadas/canceladas y cuánto ha gastado en total). Se usa
+    // desde el panel de administrador/agente para consultar a un
+    // cliente específico, y también sirve de base para el PDF
+    // individual que se exporta desde el frontend.
+    @GetMapping("/cliente/{idUsuario}")
+    public ResponseEntity<?> reporteCliente(@PathVariable Integer idUsuario) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Usuario usuario = usuarioOpt.get();
+
+        List<Reserva> reservas = reservaRepository.findAll().stream()
+                .filter(r -> r.getUsuario() != null && idUsuario.equals(r.getUsuario().getIdUsuario()))
+                .sorted(Comparator.comparing(Reserva::getFechaInicial).reversed())
+                .collect(Collectors.toList());
+
+        List<Pago> pagosDelCliente = pagoRepository.findAll().stream()
+                .filter(p -> p.getReserva() != null && p.getReserva().getUsuario() != null
+                        && idUsuario.equals(p.getReserva().getUsuario().getIdUsuario()))
+                .collect(Collectors.toList());
+
+        double totalGastado = pagosDelCliente.stream()
+                .filter(p -> "PROCESADO".equals(p.getEstado()))
+                .mapToDouble(p -> p.getValorPagado() != null ? p.getValorPagado().doubleValue() : 0)
+                .sum();
+
+        long confirmadas = reservas.stream().filter(r -> "CONFIRMADA".equals(r.getEstado())).count();
+        long canceladas = reservas.stream().filter(r -> "CANCELADA".equals(r.getEstado())).count();
+
+        List<Map<String, Object>> historial = reservas.stream().map(r -> {
+            Map<String, Object> fila = new LinkedHashMap<>();
+            fila.put("idReserva", r.getIdReserva());
+            fila.put("estado", r.getEstado());
+            fila.put("fechaReserva", r.getFechaInicial().toString());
+
+            if (r.getViaje() != null) {
+                Ruta ruta = r.getViaje().getRuta();
+                fila.put("ruta", ruta.getTerminalOrigen().getCiudad() + " → " + ruta.getTerminalDestino().getCiudad());
+                fila.put("fechaViaje", r.getViaje().getFechaViaje().toString());
+                fila.put("horaSalida", r.getViaje().getHoraSalida().toString());
+            } else {
+                fila.put("ruta", "—");
+                fila.put("fechaViaje", "—");
+                fila.put("horaSalida", "—");
+            }
+
+            Optional<Pago> pago = pagosDelCliente.stream()
+                    .filter(p -> p.getReserva() != null && r.getIdReserva().equals(p.getReserva().getIdReserva()))
+                    .findFirst();
+            fila.put("valorPagado", pago.map(Pago::getValorPagado).orElse(0f));
+            fila.put("metodoPago", pago.map(Pago::getMetodoPago).orElse("—"));
+            return fila;
+        }).collect(Collectors.toList());
+
+        Map<String, Object> datosUsuario = new LinkedHashMap<>();
+        datosUsuario.put("idUsuario", usuario.getIdUsuario());
+        datosUsuario.put("nombreCompleto", usuario.getNombreCompleto());
+        datosUsuario.put("correoElectronico", usuario.getCorreoElectronico());
+        datosUsuario.put("telefono", usuario.getTelefono() != null ? usuario.getTelefono() : "—");
+        datosUsuario.put("numeroDocumento", usuario.getNumeroDocumento() != null ? usuario.getNumeroDocumento() : "—");
+        datosUsuario.put("rol", usuario.getRol() != null ? usuario.getRol().getNombreRol() : "—");
+
+        Map<String, Object> resultado = new LinkedHashMap<>();
+        resultado.put("usuario", datosUsuario);
+        resultado.put("totalReservas", reservas.size());
+        resultado.put("reservasConfirmadas", confirmadas);
+        resultado.put("reservasCanceladas", canceladas);
+        resultado.put("totalGastado", totalGastado);
+        resultado.put("historial", historial);
+        return ResponseEntity.ok(resultado);
     }
 }

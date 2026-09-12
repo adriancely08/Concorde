@@ -1,3 +1,4 @@
+<!-- Panel del rol ADMIN: usuarios, catálogo completo (rutas, viajes, terminales, vehículos, conductores), pagos, reservas, reportes (general e individual por cliente) y configuración. -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -997,6 +998,14 @@
         <div id="aviso-reportes-agotados"></div>
 
         <div id="contenido-reportes">
+        <div id="reporte-encabezado" class="d-flex align-items-center gap-3 pb-3 mb-3" style="border-bottom:2px solid var(--azul-principal);">
+          <img src="img/LogoConcorde.png" alt="Logo Concorde" style="height:52px;width:auto;">
+          <div>
+            <h3 class="mb-0" style="color:var(--azul-principal);font-family:var(--fuente-titulo);">Concorde Transporte Terrestre — Reporte General</h3>
+            <p class="mb-0 text-muted small" id="repFechaGeneracion">Generado el —</p>
+          </div>
+        </div>
+
         <div class="row g-3 mb-3">
           <div class="col-md-4">
             <div class="config-card text-center py-3">
@@ -1057,6 +1066,89 @@
           </div>
         </div>
         </div><!-- /contenido-reportes -->
+
+        <!-- ══ Reporte individual por cliente ══ -->
+        <div class="config-card mt-4">
+          <h6 class="fw-bold mb-3"><i class="bi bi-person-lines-fill me-1"></i>Reporte individual por cliente</h6>
+          <div class="row g-2 align-items-end">
+            <div class="col-md-8">
+              <label for="selectClienteReporte" class="form-label small text-muted mb-1">Elige un cliente</label>
+              <select id="selectClienteReporte" class="form-select form-select-sm">
+                <option value="">Cargando clientes…</option>
+              </select>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+              <button class="btn btn-concorde-primario btn-sm flex-fill" onclick="generarReporteIndividual()">
+                <i class="bi bi-file-earmark-person me-1" aria-hidden="true"></i>Generar
+              </button>
+            </div>
+          </div>
+
+          <div id="reporte-individual-vacio" class="text-center text-muted py-4">
+            Elige un cliente de la lista y da clic en "Generar" para ver su reporte.
+          </div>
+
+          <div id="reporte-individual-contenido" class="d-none mt-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+              <div></div>
+              <button class="btn btn-concorde-dorado btn-sm" onclick="exportarReporteIndividualPDF()">
+                <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>Exportar PDF
+              </button>
+            </div>
+
+            <div id="reporte-individual-pdf">
+              <div class="d-flex align-items-center gap-3 pb-3 mb-3" style="border-bottom:2px solid var(--azul-principal);">
+                <img src="img/LogoConcorde.png" alt="Logo Concorde" style="height:52px;width:auto;">
+                <div>
+                  <h3 class="mb-0" style="color:var(--azul-principal);font-family:var(--fuente-titulo);">Concorde Transporte Terrestre — Reporte Individual de Cliente</h3>
+                  <p class="mb-0 text-muted small" id="repIndividualFecha">Generado el —</p>
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <div class="config-card">
+                    <h6 class="fw-bold mb-2">Datos del cliente</h6>
+                    <div id="repIndividualDatos" class="small"></div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <div class="config-card text-center py-2">
+                        <div class="text-muted small">Reservas totales</div>
+                        <div class="fs-4 fw-bold texto-azul" id="repIndividualTotal">—</div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="config-card text-center py-2">
+                        <div class="text-muted small">Total gastado</div>
+                        <div class="fs-4 fw-bold texto-azul" id="repIndividualGastado">—</div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="config-card text-center py-2">
+                        <div class="text-muted small">Confirmadas</div>
+                        <div class="fs-5 fw-bold" style="color:#27ae60" id="repIndividualConfirmadas">—</div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="config-card text-center py-2">
+                        <div class="text-muted small">Canceladas</div>
+                        <div class="fs-5 fw-bold" style="color:#e74c3c" id="repIndividualCanceladas">—</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="config-card">
+                <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-1"></i>Historial de reservas</h6>
+                <div class="admin-tabla"><div id="rep-individual-historial">Cargando…</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="sec-configuracion" class="d-none" aria-label="Configuración del sistema">
@@ -1177,7 +1269,7 @@
 
     if (entityKeys.includes(nombre)) cargarEntidad(nombre);
     if (nombre === 'dashboard') cargarStatsDashboard();
-    if (nombre === 'reportes') cargarReportes();
+    if (nombre === 'reportes') { cargarReportes(); cargarClientesReporte(); }
   }
 
   // ════════════════════════════════════════════════════════
@@ -1597,15 +1689,7 @@
   function exportarReportesPDF() {
     const elemento = document.getElementById('contenido-reportes');
     const fecha = new Date().toLocaleDateString('es-CO');
-
-    // Encabezado temporal solo para el PDF (no se ve en la pantalla)
-    const encabezado = document.createElement('div');
-    encabezado.style.cssText = 'padding-bottom:12px;margin-bottom:12px;border-bottom:2px solid #003580;';
-    encabezado.innerHTML = `
-      <h3 style="color:#003580;margin:0;">Concorde Transporte Terrestre — Reporte General</h3>
-      <p style="margin:4px 0 0;color:#555;font-size:13px;">Generado el ${fecha}</p>
-    `;
-    elemento.prepend(encabezado);
+    document.getElementById('repFechaGeneracion').textContent = `Generado el ${fecha}`;
 
     mostrarToastAdmin('Generando PDF...', 'info');
 
@@ -1620,11 +1704,82 @@
       })
       .from(elemento)
       .save()
-      .then(() => encabezado.remove())
-      .catch(() => {
-        encabezado.remove();
-        mostrarToastAdmin('No se pudo generar el PDF', 'danger');
-      });
+      .catch(() => mostrarToastAdmin('No se pudo generar el PDF', 'danger'));
+  }
+
+  // ── Reporte individual por cliente ──────────────────────
+  async function cargarClientesReporte() {
+    const select = document.getElementById('selectClienteReporte');
+    try {
+      const usuarios = await fetch(`${API}/usuarios`).then(r => r.json());
+      const clientes = usuarios.filter(u => u.rol && u.rol.nombreRol === 'CLIENTE');
+      select.innerHTML = '<option value="">Selecciona un cliente…</option>' +
+        clientes.map(c => `<option value="${c.idUsuario}">${c.nombreCompleto} — ${c.correoElectronico}</option>`).join('');
+    } catch (e) {
+      select.innerHTML = '<option value="">No se pudieron cargar los clientes</option>';
+    }
+  }
+
+  async function generarReporteIndividual() {
+    const idUsuario = document.getElementById('selectClienteReporte').value;
+    if (!idUsuario) {
+      mostrarToastAdmin('Primero elige un cliente de la lista', 'warning');
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/reportes/cliente/${idUsuario}`);
+      if (!res.ok) throw new Error('No se pudo generar el reporte');
+      const datos = await res.json();
+
+      document.getElementById('reporte-individual-vacio').classList.add('d-none');
+      document.getElementById('reporte-individual-contenido').classList.remove('d-none');
+
+      const fecha = new Date().toLocaleDateString('es-CO');
+      document.getElementById('repIndividualFecha').textContent = `Generado el ${fecha}`;
+
+      document.getElementById('repIndividualDatos').innerHTML = `
+        <p class="mb-1"><strong>${datos.usuario.nombreCompleto}</strong></p>
+        <p class="mb-1">Correo: ${datos.usuario.correoElectronico}</p>
+        <p class="mb-1">Teléfono: ${datos.usuario.telefono}</p>
+        <p class="mb-1">Documento: ${datos.usuario.numeroDocumento}</p>
+        <p class="mb-0">Rol: ${datos.usuario.rol}</p>
+      `;
+      document.getElementById('repIndividualTotal').textContent = datos.totalReservas;
+      document.getElementById('repIndividualGastado').textContent = formatoMoneda(datos.totalGastado);
+      document.getElementById('repIndividualConfirmadas').textContent = datos.reservasConfirmadas;
+      document.getElementById('repIndividualCanceladas').textContent = datos.reservasCanceladas;
+
+      document.getElementById('rep-individual-historial').innerHTML = tablaSimple(datos.historial, [
+        { label: 'Reserva', render: f => `#${f.idReserva}` },
+        { label: 'Ruta', key: 'ruta' },
+        { label: 'Fecha viaje', render: f => `${f.fechaViaje} ${f.horaSalida}` },
+        { label: 'Estado', render: f => `<span class="estado-badge ${f.estado === 'CONFIRMADA' ? 'eb-completada' : (f.estado === 'CANCELADA' ? 'eb-cancelada' : 'eb-pendiente')}">${f.estado}</span>` },
+        { label: 'Pagado', render: f => formatoMoneda(f.valorPagado) }
+      ]);
+    } catch (e) {
+      mostrarToastAdmin('No se pudo generar el reporte individual: ' + e.message, 'danger');
+    }
+  }
+
+  function exportarReporteIndividualPDF() {
+    const elemento = document.getElementById('reporte-individual-pdf');
+    const nombre = document.getElementById('selectClienteReporte').selectedOptions[0]?.textContent || 'cliente';
+    const fecha = new Date().toLocaleDateString('es-CO');
+
+    mostrarToastAdmin('Generando PDF...', 'info');
+
+    html2pdf()
+      .set({
+        margin: 10,
+        filename: `reporte-cliente-${nombre.split('—')[0].trim().replaceAll(' ', '-')}-${fecha.replaceAll('/', '-')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      })
+      .from(elemento)
+      .save()
+      .catch(() => mostrarToastAdmin('No se pudo generar el PDF', 'danger'));
   }
 
   // ── Sidebar móvil ────────────────────────
