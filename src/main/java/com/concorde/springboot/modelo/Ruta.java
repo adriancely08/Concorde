@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Un trayecto entre dos terminales (origen y destino) con su precio base.
+ * Cada Viaje programado usa una Ruta.
+ */
 @Entity
 @Table(name = "ruta")
 @Data

@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CRUD de rutas (trayecto entre dos terminales con su precio).
+ */
 @RestController
 @RequestMapping("/api/rutas")
 public class RutaController {

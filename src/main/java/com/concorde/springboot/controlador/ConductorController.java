@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CRUD de conductores. Igual patrón que los demás: listar, ver uno,
+ * crear, editar, borrar.
+ */
 @RestController
 @RequestMapping("/api/conductores")
 public class ConductorController {

@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CRUD de personas (datos base que luego usa Conductor).
+ */
 @RestController
 @RequestMapping("/api/personas")
 public class PersonaController {

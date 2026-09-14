@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * La reserva que hace un Usuario (cliente) para un Viaje. Tiene un
+ * estado (PENDIENTE, CONFIRMADA, CANCELADA) y fecha de creación.
+ */
 @Entity
 @Table(name = "reserva")
 @Data

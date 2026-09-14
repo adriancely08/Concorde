@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Una salida programada: une una Ruta, un Vehiculo y un Conductor en una
+ * fecha y hora concretas. Es lo que el cliente busca y reserva.
+ */
 @Entity
 @Table(name = "viaje")
 @Data

@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CRUD de viajes (una salida programada: ruta + vehículo + conductor +
+ * fecha/hora). Es lo que el cliente busca en la página de inicio.
+ */
 @RestController
 @RequestMapping("/api/viajes")
 public class ViajeController {

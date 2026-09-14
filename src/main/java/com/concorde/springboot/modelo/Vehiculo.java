@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Un bus de la flota: placa, capacidad de pasajeros, modelo. Cada Viaje
+ * se hace en un Vehiculo, y cada Vehiculo tiene varios Asientos.
+ */
 @Entity
 @Table(name = "vehiculo")
 @Data

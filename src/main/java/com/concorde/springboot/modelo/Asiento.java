@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Un puesto físico dentro de un Vehiculo (su número/ubicación). Se usa
+ * para saber qué asiento ocupa cada pasajero en DetalleReserva.
+ */
 @Entity
 @Table(name = "asiento")
 @Data

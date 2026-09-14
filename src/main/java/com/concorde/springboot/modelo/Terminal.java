@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Una terminal de transporte terrestre en una ciudad (punto de origen o
+ * destino de una Ruta).
+ */
 @Entity
 @Table(name = "terminal")
 @Data

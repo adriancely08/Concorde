@@ -2,6 +2,11 @@ package com.concorde.springboot.modelo;
 
 import jakarta.persistence.*;
 
+/**
+ * Datos personales base (nombre, documento, teléfono). Es la clase "padre"
+ * de Conductor: guarda lo que cualquier persona necesita, sin mezclarlo
+ * con datos propios de ser conductor.
+ */
 @Entity
 @Table(name = "persona")
 public class Persona {

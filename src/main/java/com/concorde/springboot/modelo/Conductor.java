@@ -3,6 +3,10 @@ package com.concorde.springboot.modelo;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+/**
+ * Un conductor de bus. Hereda los datos personales de Persona y le
+ * agrega lo específico de ser conductor (licencia, etc.).
+ */
 @Entity
 @Table(name = "conductor")
 public class Conductor {

@@ -2,6 +2,10 @@ package com.concorde.springboot.modelo;
 
 import jakarta.persistence.*;
 
+/**
+ * Los roles del sistema: ADMIN, AGENTE o CLIENTE. Cada Usuario tiene uno,
+ * y de ahí depende qué rutas de la API puede usar (ver SecurityConfig).
+ */
 @Entity
 @Table(name = "rol")
 public class Rol {

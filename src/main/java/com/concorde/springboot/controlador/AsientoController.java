@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CRUD de asientos (GET listar/uno, POST crear, PUT editar, DELETE borrar).
+ * Se usa desde el panel de administrador para gestionar los asientos
+ * de cada vehículo.
+ */
 @RestController
 @RequestMapping("/api/asientos")
 public class AsientoController {

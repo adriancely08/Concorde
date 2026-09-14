@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CRUD de terminales de transporte.
+ */
 @RestController
 @RequestMapping("/api/terminales")
 public class TerminalController {

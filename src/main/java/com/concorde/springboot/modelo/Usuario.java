@@ -3,6 +3,12 @@ package com.concorde.springboot.modelo;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Cualquiera que puede iniciar sesión en el sistema: cliente, agente o
+ * administrador. El rol (ver Rol) es lo que decide qué puede hacer cada uno.
+ * La contraseña se guarda siempre hasheada con BCrypt (ver PasswordUtil),
+ * nunca en texto plano.
+ */
 @Entity
 @Table(name = "usuario")
 public class Usuario {

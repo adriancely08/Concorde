@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * El pago asociado a una Reserva: valor, método de pago y estado
+ * (por ejemplo PROCESADO). Los reportes de ingresos se calculan a
+ * partir de estos registros.
+ */
 @Entity
 @Table(name = "pago")
 @Data

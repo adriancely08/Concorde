@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Qué Asiento específico ocupa una Reserva (una reserva puede tener
+ * varios pasajeros/asientos).
+ */
 @Entity
 @Table(name = "detalle_reserva")
 @Data
