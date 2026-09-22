@@ -484,7 +484,7 @@
       </div>
       <div class="topbar-acciones">
         <!-- Notificaciones -->
-        <button class="topbar-notif" id="btnNotif" aria-label="Ver notificaciones (3 nuevas)" onclick="toggleNotif()">
+        <button class="topbar-notif" id="btnNotif" aria-label="Ver notificaciones" onclick="toggleNotif()">
           <i class="bi bi-bell-fill" aria-hidden="true"></i>
           <span class="notif-dot" aria-hidden="true"></span>
         </button>
@@ -492,19 +492,8 @@
         <div id="panelNotif" class="d-none position-absolute bg-white rounded-3 shadow p-3"
           style="top:60px;right:80px;width:280px;z-index:200;border:1px solid #eef0f5" role="dialog" aria-label="Notificaciones">
           <h2 class="h6 fw-bold mb-2">Notificaciones</h2>
-          <div class="d-flex flex-column gap-2">
-            <div class="p-2 rounded" style="background:rgba(0,87,183,.06);font-size:.82rem">
-              <strong>Nueva reserva</strong> — Juan Pérez<br>
-              <span class="text-muted">hace 5 min</span>
-            </div>
-            <div class="p-2 rounded" style="background:rgba(231,76,60,.06);font-size:.82rem">
-              <strong>Cancelación</strong> — María García<br>
-              <span class="text-muted">hace 20 min</span>
-            </div>
-            <div class="p-2 rounded" style="background:rgba(46,204,113,.08);font-size:.82rem">
-              <strong>Pago recibido</strong> — Ana Martínez<br>
-              <span class="text-muted">hace 45 min</span>
-            </div>
+          <div class="d-flex flex-column gap-2" id="listaNotificaciones">
+            <div class="text-center text-muted small py-2">Cargando…</div>
           </div>
           <button onclick="document.getElementById('panelNotif').classList.add('d-none')"
             class="btn btn-sm btn-outline-secondary w-100 mt-2">Cerrar</button>
@@ -1290,7 +1279,7 @@
       {name:'numeroDocumento', label:'N° Documento', type:'text', required:true},
       {name:'telefono', label:'Teléfono', type:'text'},
       {name:'correoElectronico', label:'Correo', type:'email', required:true},
-      {name:'contrasenaHash', label:'Contraseña', type:'text', required:true},
+      {name:'contrasenaHash', label:'Contraseña', type:'text', required:true, sensible:true},
       {name:'rol', label:'Rol', type:'fk', fk:'roles', fkIdField:'idRol', fkLabelFn:r=>r.nombreRol}
     ], columns:['idUsuario','nombreCompleto','correoElectronico','rol']},
 
@@ -1478,6 +1467,7 @@
 
   function construirFormulario(key, data) {
     const ent = entities[key];
+    const esEdicion = !!(data && data[ent.idField]);
     let campos = '';
     ent.fields.forEach(f => {
       if (f.type === 'fk') {
@@ -1500,6 +1490,15 @@
         campos += `<div class="col-md-4 d-flex align-items-end">
           <div class="form-check"><input class="form-check-input" type="checkbox" data-name="${f.name}" data-type="checkbox" ${checked}>
           <label class="form-check-label form-label mb-0">${f.label}</label></div></div>`;
+      } else if (f.sensible) {
+        // Nunca se muestra el valor guardado (es un hash de un solo
+        // sentido, no la contraseña real). Al editar se deja vacío: si
+        // el admin no escribe nada, el backend conserva la contraseña
+        // que ya tenía; si escribe una nueva, esa es la que se guarda.
+        const placeholder = esEdicion ? 'Dejar en blanco para no cambiarla' : f.label;
+        campos += `<div class="col-md-4"><label class="form-label">${f.label}</label>
+          <input class="form-control" type="password" autocomplete="new-password" data-name="${f.name}"
+            value="" placeholder="${placeholder}" ${(f.required && !esEdicion) ? 'required' : ''}></div>`;
       } else {
         const val = data[f.name] ?? f.default ?? '';
         campos += `<div class="col-md-4"><label class="form-label">${f.label}</label>
@@ -1560,6 +1559,10 @@
 
   function editarRegistro(key, id) {
     abrirFormulario(key, id);
+    // El formulario de edición vive arriba de la tabla; si el registro
+    // está muy abajo en la lista, sin esto pareciera que el botón
+    // "Editar" no hizo nada.
+    document.getElementById('form-' + key).scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async function eliminarRegistro(key, id) {
@@ -1795,10 +1798,53 @@
   }
 
   // ── Notificaciones ───────────────────────
+  // Antes mostraba siempre los mismos 3 nombres inventados. Ahora trae
+  // la reserva más reciente, la cancelación más reciente y el pago
+  // procesado más reciente, con datos reales (cliente y fecha) en vez
+  // de un "hace X minutos" que no se puede calcular de verdad porque
+  // reserva/pago solo guardan la fecha, no la hora exacta.
+  let notificacionesCargadas = false;
+
+  async function cargarNotificaciones() {
+    const cont = document.getElementById('listaNotificaciones');
+    try {
+      const [reservas, pagos] = await Promise.all([
+        fetch(`${API}/reservas`).then(r => r.json()),
+        fetch(`${API}/pagos`).then(r => r.json())
+      ]);
+
+      const masReciente = (arr, campoId) => arr.slice().sort((a, b) => b[campoId] - a[campoId])[0];
+      const nuevaReserva = masReciente(reservas.filter(r => r.estado !== 'CANCELADA'), 'idReserva');
+      const cancelacion = masReciente(reservas.filter(r => r.estado === 'CANCELADA'), 'idReserva');
+      const pagoReciente = masReciente(pagos.filter(p => p.estado === 'PROCESADO'), 'idPago');
+
+      const items = [];
+      if (nuevaReserva) items.push({ color: 'rgba(0,87,183,.06)', titulo: 'Nueva reserva',
+        quien: nuevaReserva.usuario?.nombreCompleto || 'Cliente', fecha: nuevaReserva.fechaInicial });
+      if (cancelacion) items.push({ color: 'rgba(231,76,60,.06)', titulo: 'Cancelación',
+        quien: cancelacion.usuario?.nombreCompleto || 'Cliente', fecha: cancelacion.fechaInicial });
+      if (pagoReciente) items.push({ color: 'rgba(46,204,113,.08)', titulo: 'Pago recibido',
+        quien: pagoReciente.reserva?.usuario?.nombreCompleto || 'Cliente', fecha: pagoReciente.fechaPago });
+
+      cont.innerHTML = items.length
+        ? items.map(it => `
+            <div class="p-2 rounded" style="background:${it.color};font-size:.82rem">
+              <strong>${it.titulo}</strong> — ${it.quien}<br>
+              <span class="text-muted">${it.fecha}</span>
+            </div>`).join('')
+        : '<div class="text-center text-muted small py-2">Sin actividad reciente</div>';
+      notificacionesCargadas = true;
+    } catch (e) {
+      cont.innerHTML = '<div class="text-center text-muted small py-2">No se pudo cargar la actividad reciente</div>';
+    }
+  }
+
   function toggleNotif() {
     const p = document.getElementById('panelNotif');
+    const seVaAAbrir = p.classList.contains('d-none');
     p.classList.toggle('d-none');
     document.querySelector('.notif-dot').style.display = 'none';
+    if (seVaAAbrir) cargarNotificaciones();
   }
   document.addEventListener('click', (e) => {
     if (!document.getElementById('btnNotif').contains(e.target) &&
