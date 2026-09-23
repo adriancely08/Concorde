@@ -17,6 +17,7 @@ documentación completa está organizada así:
 - [`docs/04-plan-de-pruebas.md`](docs/04-plan-de-pruebas.md) — pruebas automatizadas, casos de prueba manuales, criterios de aceptación.
 - [`docs/05-despliegue.md`](docs/05-despliegue.md) — tecnologías, variables de entorno, procedimiento de despliegue.
 - [`docs/06-historias-de-usuario-backlog.md`](docs/06-historias-de-usuario-backlog.md) — backlog e historias de usuario.
+- [`docs/07-backlog-oficial-CON.md`](docs/07-backlog-oficial-CON.md) — backlog oficial del equipo (62 ítems, IDs CON-01 a CON-62) con el estado real verificado contra el código.
 - [`docs/originales-equipo/`](docs/originales-equipo/) — diagramas de clases, relacional, ERD, diccionario de datos, casos de uso e historias de usuario originales del equipo (PDF/Excel/Word).
 - [`EVALUACION-RUBRICA.md`](EVALUACION-RUBRICA.md) — autoevaluación honesta contra la rúbrica de sustentación.
 
