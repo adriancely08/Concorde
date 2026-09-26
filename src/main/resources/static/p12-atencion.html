@@ -163,11 +163,111 @@
           </div>
         </div>
       </div>
+
+      <!-- PQRS -->
+      <div class="row mt-5" id="seccionPqrs">
+        <div class="col-lg-8 mx-auto">
+          <h2 class="h4 fw-bold texto-azul mb-1"><i class="bi bi-file-earmark-text me-2" aria-hidden="true"></i>Peticiones, Quejas, Reclamos y Sugerencias (PQRS)</h2>
+          <p class="text-muted small mb-4">¿Tienes algo más formal que reportar? Radica tu PQRS aquí y un asesor te responderá con seguimiento.</p>
+
+          <div class="card-concorde p-4 mb-4">
+            <form id="formPqrs" class="row g-3">
+              <div class="col-md-4">
+                <label for="pqrsTipo" class="form-label small fw-semibold">Tipo</label>
+                <select id="pqrsTipo" class="form-select" required>
+                  <option value="PETICION">Petición</option>
+                  <option value="QUEJA">Queja</option>
+                  <option value="RECLAMO">Reclamo</option>
+                  <option value="SUGERENCIA">Sugerencia</option>
+                </select>
+              </div>
+              <div class="col-md-8">
+                <label for="pqrsAsunto" class="form-label small fw-semibold">Asunto</label>
+                <input type="text" id="pqrsAsunto" class="form-control" maxlength="200" required>
+              </div>
+              <div class="col-12">
+                <label for="pqrsDescripcion" class="form-label small fw-semibold">Descripción</label>
+                <textarea id="pqrsDescripcion" class="form-control" rows="4" required></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-concorde-primario"><i class="bi bi-send me-1" aria-hidden="true"></i>Radicar PQRS</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="misPqrsWrapper" class="d-none">
+            <h3 class="h6 fw-bold mb-3">Mis PQRS radicadas</h3>
+            <div id="listaMisPqrs" class="d-flex flex-column gap-2"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
   <div id="footer-placeholder"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/componentes.js"></script><script src="js/main.js"></script>
+  <script>
+    // PQRS: distinto del chatbot -- aquí queda un registro formal con
+    // seguimiento (estado + respuesta), no una conversación en vivo.
+    const API_PQRS = (typeof AUTH_API !== 'undefined') ? AUTH_API : 'http://localhost:8082/api';
+
+    function escaparHtml(texto) {
+      const div = document.createElement('div');
+      div.textContent = texto ?? '';
+      return div.innerHTML;
+    }
+
+    document.getElementById('formPqrs').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const usuario = (typeof Auth !== 'undefined') ? Auth.getUsuario() : null;
+      const payload = {
+        tipo: document.getElementById('pqrsTipo').value,
+        asunto: document.getElementById('pqrsAsunto').value.trim(),
+        descripcion: document.getElementById('pqrsDescripcion').value.trim(),
+        idUsuario: usuario ? usuario.id : null
+      };
+      try {
+        const res = await fetch(`${API_PQRS}/pqrs`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || 'No se pudo radicar la PQRS');
+        }
+        document.getElementById('formPqrs').reset();
+        UI.mostrarToast('Tu PQRS fue radicada. Un asesor te responderá pronto.', 'success');
+        if (usuario) cargarMisPqrs(usuario.id);
+      } catch (err) {
+        UI.mostrarToast(err.message, 'danger');
+      }
+    });
+
+    async function cargarMisPqrs(idUsuario) {
+      try {
+        const lista = await fetch(`${API_PQRS}/pqrs/usuario/${idUsuario}`).then(r => r.json());
+        const wrapper = document.getElementById('misPqrsWrapper');
+        const cont = document.getElementById('listaMisPqrs');
+        if (!lista.length) { wrapper.classList.add('d-none'); return; }
+        wrapper.classList.remove('d-none');
+        const badge = { ABIERTA: 'bg-warning text-dark', EN_PROCESO: 'bg-info text-dark', RESUELTA: 'bg-success' };
+        cont.innerHTML = lista.map(p => `
+          <div class="card-concorde p-3">
+            <span class="badge ${badge[p.estado] || 'bg-secondary'} mb-1">${escaparHtml(p.estado)}</span>
+            <div class="fw-semibold small">${escaparHtml(p.tipo)} — ${escaparHtml(p.asunto)}</div>
+            <div class="text-muted small">${escaparHtml(p.descripcion)}</div>
+            ${p.respuesta ? `<div class="mt-2 p-2 rounded" style="background:rgba(0,87,183,.06);font-size:.85rem"><strong>Respuesta:</strong> ${escaparHtml(p.respuesta)}</div>` : ''}
+          </div>
+        `).join('');
+      } catch (e) { /* si falla, se deja el bloque oculto */ }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const usuario = (typeof Auth !== 'undefined') ? Auth.getUsuario() : null;
+      if (usuario) cargarMisPqrs(usuario.id);
+    });
+  </script>
 </body>
 </html>

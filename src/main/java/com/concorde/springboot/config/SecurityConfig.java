@@ -89,6 +89,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/usuarios/**").authenticated()
                 // Reportes, conductores y personas: solo personal interno
                 .requestMatchers("/api/reportes/**", "/api/conductores/**", "/api/personas/**").hasAnyRole("ADMIN", "AGENTE")
+                // PQRS: listar todas y responder es solo personal interno; un
+                // cliente puede radicar la suya y ver el estado (cae en
+                // anyRequest().authenticated() más abajo)
+                .requestMatchers(HttpMethod.GET, "/api/pqrs").hasAnyRole("ADMIN", "AGENTE")
+                .requestMatchers(HttpMethod.PUT, "/api/pqrs/**").hasAnyRole("ADMIN", "AGENTE")
                 // Crear/editar catálogo (rutas, viajes, terminales, vehículos): solo personal
                 .requestMatchers(HttpMethod.POST, "/api/viajes/**", "/api/rutas/**",
                         "/api/terminales/**", "/api/vehiculos/**").hasAnyRole("ADMIN", "AGENTE")
