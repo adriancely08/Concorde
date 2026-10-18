@@ -106,11 +106,14 @@ public class ChatbotController {
         if ("ESCALADA".equals(consulta.getEstado()) || "EN_ATENCION".equals(consulta.getEstado())) {
             consulta.setActualizadoEn(LocalDateTime.now());
             consultaRepository.save(consulta);
-            return ResponseEntity.ok(Map.of(
-                    "respuesta", (Object) null,
-                    "escalado", true,
-                    "estado", consulta.getEstado()
-            ));
+            // Map.of() no acepta valores null (lanzaría NullPointerException),
+            // por eso aquí se usa un HashMap: "respuesta" va en null a propósito
+            // porque en este estado el bot no responde, solo un humano.
+            Map<String, Object> pendiente = new java.util.HashMap<>();
+            pendiente.put("respuesta", null);
+            pendiente.put("escalado", true);
+            pendiente.put("estado", consulta.getEstado());
+            return ResponseEntity.ok(pendiente);
         }
 
         // Si estaba cerrada, reabrir la conversación con el bot.
