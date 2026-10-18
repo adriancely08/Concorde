@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F4F6FA">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_concorde" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Chat -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#003580"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💬 Chat con un asesor"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Nuestro asistente resuelve tus dudas al instante; si hace falta, te pasa con una persona."
+                        android:textColor="#CFE0FA"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:id="@+id/botonAbrirChat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Iniciar chat"
+                        android:backgroundTint="#F5A623"
+                        android:textColor="#1A1A2E" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- FAQ -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="Preguntas frecuentes"
+                android:textColor="#003580"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/contenedorFaq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- PQRS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="Peticiones, quejas, reclamos y sugerencias"
+                android:textColor="#003580"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Radica tu PQRS y un asesor te responderá con seguimiento."
+                android:textColor="#777777"
+                android:textSize="13sp" />
+
+            <Spinner
+                android:id="@+id/spinnerTipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <EditText
+                android:id="@+id/campoAsunto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Asunto"
+                android:inputType="textCapSentences"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <EditText
+                android:id="@+id/campoDescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Cuéntanos el detalle"
+                android:inputType="textMultiLine|textCapSentences"
+                android:minLines="4"
+                android:gravity="top"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <TextView
+                android:id="@+id/textoEstadoPqrs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/botonRadicar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Radicar PQRS"
+                android:backgroundTint="#003580"
+                android:textColor="#FFFFFF" />
+
+            <!-- Mis PQRS -->
+            <TextView
+                android:id="@+id/tituloMisPqrs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="Mis PQRS radicadas"
+                android:textColor="#003580"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/contenedorMisPqrs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

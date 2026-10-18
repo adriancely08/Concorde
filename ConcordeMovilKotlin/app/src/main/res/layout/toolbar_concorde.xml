@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#003580"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp"
+    android:gravity="center_vertical"
+    android:elevation="4dp">
+
+    <ImageButton
+        android:id="@+id/botonAtras"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_revert"
+        app:tint="#FFFFFF"
+        android:contentDescription="Volver"
+        android:visibility="gone"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+    <ImageView
+        android:id="@+id/imagenLogo"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:src="@drawable/logo_concorde"
+        android:contentDescription="Logo Concorde" />
+
+    <TextView
+        android:id="@+id/textoTitulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="10dp"
+        android:text="Concorde"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

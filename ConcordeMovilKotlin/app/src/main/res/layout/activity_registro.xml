@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F4F6FA">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_concorde" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Crea tu cuenta"
+                android:textColor="#003580"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="Regístrate para reservar y pagar tus tiquetes."
+                android:textColor="#777777" />
+
+            <EditText
+                android:id="@+id/campoNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre completo"
+                android:inputType="textPersonName|textCapWords"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <EditText
+                android:id="@+id/campoDocumento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Número de documento"
+                android:inputType="number"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <EditText
+                android:id="@+id/campoTelefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Teléfono"
+                android:inputType="phone"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <EditText
+                android:id="@+id/campoCorreo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Correo electrónico"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <EditText
+                android:id="@+id/campoContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Contraseña (mínimo 8 caracteres)"
+                android:inputType="textPassword"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <EditText
+                android:id="@+id/campoConfirmar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Confirmar contraseña"
+                android:inputType="textPassword"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <TextView
+                android:id="@+id/textoError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#E74C3C"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/progreso"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/botonRegistrar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Crear cuenta"
+                android:backgroundTint="#003580"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

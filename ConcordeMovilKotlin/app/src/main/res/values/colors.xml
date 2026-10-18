@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="azul_concorde">#003580</color>
+    <color name="azul_claro">#2E86DE</color>
+    <color name="dorado">#F4A623</color>
+    <color name="blanco">#FFFFFF</color>
+    <color name="gris_fondo">#F4F6FA</color>
+    <color name="verde_confirmada">#27AE60</color>
+    <color name="rojo_cancelada">#E74C3C</color>
+    <color name="naranja_pendiente">#F39C12</color>
+</resources>

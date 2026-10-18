@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F4F6FA">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_concorde" />
+
+    <TextView
+        android:id="@+id/textoAviso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF3DC"
+        android:padding="10dp"
+        android:textColor="#9A6A00"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/botonCerrarTicket"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cerrar ticket"
+        android:textColor="#E74C3C"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listaMensajes"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingVertical="8dp"
+        android:clipToPadding="false" />
+
+    <HorizontalScrollView
+        android:id="@+id/contenedorChips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp">
+
+            <Button
+                android:id="@+id/chipHorarios"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Horarios"
+                android:textColor="#003580" />
+
+            <Button
+                android:id="@+id/chipEquipaje"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Equipaje"
+                android:textColor="#003580" />
+
+            <Button
+                android:id="@+id/chipCambios"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cambiar/cancelar"
+                android:textColor="#003580" />
+
+            <Button
+                android:id="@+id/chipAsesor"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hablar con un asesor"
+                android:textColor="#F5A623" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:padding="8dp"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/campoMensaje"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Escribe tu mensaje..."
+            android:inputType="textCapSentences"
+            android:maxLines="3"
+            android:padding="10dp" />
+
+        <Button
+            android:id="@+id/botonEnviar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enviar"
+            android:backgroundTint="#003580"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+</LinearLayout>

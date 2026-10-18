@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F4F6FA">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_concorde" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#003580"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/textoNombreCabecera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textoCorreo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="#CFE0FA" />
+
+                <TextView
+                    android:id="@+id/textoRol"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="#F5A623"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Editar mis datos"
+                android:textColor="#003580"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/campoNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Nombre completo"
+                android:inputType="textPersonName|textCapWords"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <EditText
+                android:id="@+id/campoTelefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Teléfono"
+                android:inputType="phone"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <EditText
+                android:id="@+id/campoContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Nueva contraseña (déjala vacía para no cambiarla)"
+                android:inputType="textPassword"
+                android:background="@drawable/fondo_campo"
+                android:padding="12dp" />
+
+            <TextView
+                android:id="@+id/textoEstado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/botonGuardar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Guardar cambios"
+                android:backgroundTint="#003580"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/botonCerrarSesion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Cerrar sesión"
+                android:backgroundTint="#E74C3C"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

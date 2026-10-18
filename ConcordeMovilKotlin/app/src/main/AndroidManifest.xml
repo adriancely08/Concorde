@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Sin esto, ninguna llamada a la API funciona -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:label="Concorde"
+        android:theme="@style/Theme.Concorde"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
+        <!--
+          usesCleartextTraffic="true": el backend corre en http:// (sin
+          HTTPS) y desde Android 9 el sistema bloquea ese tráfico por
+          defecto. Está bien para un proyecto académico que solo habla
+          con tu propio servidor; en producción real el backend tendría
+          HTTPS y esta línea se quitaría.
+        -->
+
+        <!-- Pantalla de inicio: NO exige sesión, cualquiera ve los viajes -->
+        <activity android:name=".ui.ViajesActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Cliente -->
+        <activity android:name=".ui.LoginActivity" android:exported="false" />
+        <activity android:name=".ui.RegistroActivity" android:exported="false" />
+        <activity android:name=".ui.DetalleViajeActivity" android:exported="false" />
+        <activity android:name=".ui.MisReservasActivity" android:exported="false" />
+        <activity android:name=".ui.PerfilActivity" android:exported="false" />
+        <activity android:name=".ui.AtencionActivity" android:exported="false" />
+        <activity android:name=".ui.ChatActivity" android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Paneles por rol -->
+        <activity android:name=".ui.AdminPanelActivity" android:exported="false" />
+        <activity android:name=".ui.AgentePanelActivity" android:exported="false" />
+
+        <!-- Administración (admin / agente) -->
+        <activity android:name=".ui.UsuariosActivity" android:exported="false" />
+        <activity android:name=".ui.ReservasAdminActivity" android:exported="false" />
+        <activity android:name=".ui.PagosActivity" android:exported="false" />
+        <activity android:name=".ui.PqrsPendientesActivity" android:exported="false" />
+        <activity android:name=".ui.ChatsPendientesActivity" android:exported="false" />
+        <activity android:name=".ui.ReportesActivity" android:exported="false" />
+
+    </application>
+</manifest>

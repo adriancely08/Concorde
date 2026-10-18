@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Concorde" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/azul_concorde</item>
+        <item name="colorPrimaryVariant">@color/azul_claro</item>
+        <item name="colorOnPrimary">@color/blanco</item>
+        <item name="colorSecondary">@color/dorado</item>
+        <item name="android:statusBarColor">@color/azul_concorde</item>
+    </style>
+</resources>

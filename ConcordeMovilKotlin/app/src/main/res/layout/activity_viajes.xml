@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F4F6FA">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_concorde" />
+
+    <!-- Cabecera tipo "hero" como la página de inicio de la web -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#003580"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Viaja cómodo y seguro"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Busca tu ruta y reserva en minutos"
+            android:textColor="#CFE0FA"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/campoBuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Buscar por ciudad de origen o destino"
+            android:inputType="text"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="8dp"
+            android:background="@drawable/fondo_campo"
+            android:padding="12dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textoError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:textColor="#E74C3C"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textoVacio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        android:gravity="center"
+        android:text="No hay viajes que coincidan con tu búsqueda."
+        android:textColor="#888888"
+        android:visibility="gone" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/listaViajes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:clipToPadding="false" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Barra inferior de navegación -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:elevation="8dp">
+
+        <TextView
+            android:id="@+id/navViajes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="🚌\nViajes"
+            android:textColor="#003580"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/navReservas"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="🎫\nMis reservas"
+            android:textColor="#777777"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/navAyuda"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="💬\nAyuda"
+            android:textColor="#777777"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/navPerfil"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="👤\nPerfil"
+            android:textColor="#777777"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>
