@@ -1,4 +1,4 @@
-# concorde-springboot
+# Proyecto Concorde
 
 Proyecto Spring Boot + PostgreSQL basado en el sistema Concorde, con las 10
 tablas completas (ya no solo Vehiculo).
